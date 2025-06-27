@@ -3,11 +3,7 @@ import Sidebar from "./components/sidebar.jsx";
 import LaneContainer from "./components/lanecontainer.jsx";
 
 function App() {
-  const [subreddits, setSubreddits] = useState([
-    "programming",
-    "reactjs",
-    "javascript",
-  ]);
+  const [subreddits, setSubreddits] = useState([]);
 
   const addSubreddit = (name) => {
     if (name && !subreddits.includes(name)) {
@@ -15,9 +11,21 @@ function App() {
     }
   };
 
+  const removeSubreddit = (sub) => {
+    setSubreddits((prev) => prev.filter((s) => s !== sub));
+  };
+
   return (
-    <div className="flex text-palette">
-      <LaneContainer subreddits={subreddits} />
+    <div
+      className={`flex text-palette ${
+        subreddits.length === 0 ? "bg-black" : ""
+      }`}
+    >
+      <LaneContainer
+        subreddits={subreddits}
+        removeSubreddit={removeSubreddit}
+      />
+
       <Sidebar onAddSubreddit={addSubreddit} />
     </div>
   );

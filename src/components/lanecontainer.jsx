@@ -1,7 +1,7 @@
 import React from "react";
 import Lane from "./lane";
 
-function LaneContainer({ subreddits }) {
+function LaneContainer({ subreddits, removeSubreddit }) {
   const numLanes = subreddits.length;
   return (
     <div className="h-screen flex overflow-x-auto bg-palette dark:bg-zinc-900 mr-[100px]">
@@ -11,7 +11,7 @@ function LaneContainer({ subreddits }) {
           className="h-full border-r border-gray-300 dark:border-gray-700"
           style={{ width: `${100 / numLanes}%` }}
         >
-          <Lane subreddit={name} />
+          <Lane subreddit={name} onClose={removeSubreddit} />
         </div>
       ))}
     </div>
