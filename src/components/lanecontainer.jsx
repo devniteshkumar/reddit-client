@@ -1,22 +1,21 @@
 import React from "react";
-import Lane from './lane.jsx'
+import Lane from "./lane";
 
-function LContainer() {
-  const numLanes = 2;
-  const lanes = Array.from({ length: numLanes });
-
+function LaneContainer({ subreddits }) {
+  const numLanes = subreddits.length;
   return (
-    <div className="flex-grow mr-[100px] flex">
-      {lanes.map((_, index) => (
+    <div className="h-screen flex overflow-x-auto bg-palette dark:bg-zinc-900 mr-[100px]">
+      {subreddits.map((name) => (
         <div
-          key={index}
+          key={name}
+          className="h-full border-r border-gray-300 dark:border-gray-700"
           style={{ width: `${100 / numLanes}%` }}
         >
-          <Lane />
+          <Lane subreddit={name} />
         </div>
       ))}
     </div>
   );
 }
 
-export default LContainer;
+export default LaneContainer;

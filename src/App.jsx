@@ -1,15 +1,24 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Sidebar from "./components/sidebar.jsx";
-import Lcontainer from "./components/lanecontainer.jsx";
-
+import LaneContainer from "./components/lanecontainer.jsx";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [subreddits, setSubreddits] = useState([
+    "programming",
+    "reactjs",
+    "javascript",
+  ]);
+
+  const addSubreddit = (name) => {
+    if (name && !subreddits.includes(name)) {
+      setSubreddits((prev) => [...prev, name]);
+    }
+  };
 
   return (
-    <div className="flex">
-      <Lcontainer />
-      <Sidebar />
+    <div className="flex text-palette">
+      <LaneContainer subreddits={subreddits} />
+      <Sidebar onAddSubreddit={addSubreddit} />
     </div>
   );
 }

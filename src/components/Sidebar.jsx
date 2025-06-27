@@ -1,12 +1,19 @@
 import React from "react";
 
-function sidebar() {
+function Sidebar({ onAddSubreddit }) {
+  async function OnClickPlus() {
+    const name = prompt("Enter subreddit name:");
+    if (name) {
+      onAddSubreddit(name.trim().toLowerCase());
+    }
+  }
+
   return (
-    <div className="fixed right-0 top-0 w-[100px] h-screen bg-gray-200 ">
+    <div className="fixed right-0 top-0 w-[100px] h-screen bg-gray-800 ">
       <div className="flex items-center justify-center p-3">
-        <button>
+        <button onClick={OnClickPlus}>
           <img
-            className="w-12 h-12"
+            className="w-12 h-12 filter invert"
             src="/plus-circle-fill.svg"
             alt="plus-circle-fill"
           />
@@ -16,4 +23,4 @@ function sidebar() {
   );
 }
 
-export default sidebar;
+export default Sidebar;
