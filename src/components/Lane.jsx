@@ -22,6 +22,8 @@ function Lane({ subreddit, onClose }) {
           media: post.media,
           secureMedia: post.secure_media,
           preview: post.preview,
+          ups: post.ups,
+          downs: post.downs,
         };
       });
       setPosts(newPosts);
@@ -35,18 +37,28 @@ function Lane({ subreddit, onClose }) {
 
   function renderMedia(post) {
     const { postHint, url, media, secureMedia, preview } = post;
+    const maxHeight = 400;
 
     // Images
     if (postHint === "image" && url) {
       return (
-        <img src={url} alt={post.title} className="w-full rounded-md my-2" />
+        <img
+          src={url}
+          alt={post.title}
+          className="w-full rounded-md my-2"
+          style={{ maxHeight: `${maxHeight}px`, objectFit: 'contain' }}
+        />
       );
     }
 
     // Reddit-hosted video
     if (postHint === "hosted:video" && media?.reddit_video?.fallback_url) {
       return (
-        <video controls className="w-full rounded-md my-2">
+        <video
+          controls
+          className="w-full rounded-md my-2"
+          style={{ maxHeight: `${maxHeight}px`, objectFit: 'contain' }}
+        >
           <source src={media.reddit_video.fallback_url} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
@@ -60,6 +72,7 @@ function Lane({ subreddit, onClose }) {
           src={preview.images[0].variants.gif.source.url.replace(/&amp;/g, "&")}
           alt={post.title}
           className="w-full rounded-md my-2"
+          style={{ maxHeight: `${maxHeight}px`, objectFit: 'contain' }}
         />
       );
     }
@@ -69,7 +82,10 @@ function Lane({ subreddit, onClose }) {
       const rawHtml = secureMedia.oembed.html;
 
       return (
-        <div className="relative w-full aspect-video my-2 overflow-hidden rounded-md">
+        <div
+          className="relative w-full my-2 overflow-hidden rounded-md"
+          style={{ maxHeight: `${maxHeight}px` }}
+        >
           <div
             className="absolute top-0 left-0 w-full h-full"
             dangerouslySetInnerHTML={{ __html: rawHtml }}
@@ -138,6 +154,20 @@ function Lane({ subreddit, onClose }) {
                 {post.title}
               </h3>
               {renderMedia(post)}
+              <div className="flex items-center text-xs text-gray-500">
+                <img
+                  className="w-4 h-4 mr-1 filter invert"
+                  src="caret-up-fill.svg"
+                  alt="upvote"
+                />
+                <span>{post.ups}</span>
+                <img
+                  className="w-4 h-4 mx-1 filter invert"
+                  src="caret-down-fill.svg"
+                  alt="downvote"
+                />
+                <span>{post.downs}</span>
+              </div>
               <p className="text-xs text-gray-500">by u/{post.author}</p>
             </div>
           ))}
