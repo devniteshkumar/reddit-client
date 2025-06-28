@@ -11,14 +11,19 @@ function Lane({ subreddit, onClose }) {
       setLoading(true);
       const res = await fetch(`https://www.reddit.com/r/${subreddit}/new.json`);
       const data = await res.json();
-      const newPosts = data.data.children.map((child) => ({
-        id: child.data.id,
-        title: child.data.title,
-        author: child.data.author,
-        image: child.data.preview
-          ? child.data.preview.images[0].source.url.replace(/&amp;/g, "&")
-          : null,
-      }));
+      const newPosts = data.data.children.map((child) => {
+        const post = child.data;
+        return {
+          id: post.id,
+          title: post.title,
+          author: post.author,
+          postHint: post.post_hint,
+          url: post.url,
+          media: post.media,
+          secureMedia: post.secure_media,
+          preview: post.preview,
+        };
+      });
       setPosts(newPosts);
       setError(null);
     } catch {
@@ -27,6 +32,54 @@ function Lane({ subreddit, onClose }) {
       setLoading(false);
     }
   };
+
+  function renderMedia(post) {
+    const { postHint, url, media, secureMedia, preview } = post;
+
+    // Images
+    if (postHint === "image" && url) {
+      return (
+        <img src={url} alt={post.title} className="w-full rounded-md my-2" />
+      );
+    }
+
+    // Reddit-hosted video
+    if (postHint === "hosted:video" && media?.reddit_video?.fallback_url) {
+      return (
+        <video controls className="w-full rounded-md my-2">
+          <source src={media.reddit_video.fallback_url} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      );
+    }
+
+    // Gifs via preview
+    if (preview?.images?.[0]?.variants?.gif?.source?.url) {
+      return (
+        <img
+          src={preview.images[0].variants.gif.source.url.replace(/&amp;/g, "&")}
+          alt={post.title}
+          className="w-full rounded-md my-2"
+        />
+      );
+    }
+
+    // Rich embeds (like YouTube or Redgifs)
+    if (postHint === "rich:video" && secureMedia?.oembed?.html) {
+      const rawHtml = secureMedia.oembed.html;
+
+      return (
+        <div className="relative w-full aspect-video my-2 overflow-hidden rounded-md">
+          <div
+            className="absolute top-0 left-0 w-full h-full"
+            dangerouslySetInnerHTML={{ __html: rawHtml }}
+          />
+        </div>
+      );
+    }
+
+    return null;
+  }
 
   useEffect(() => {
     fetchPosts();
@@ -84,13 +137,7 @@ function Lane({ subreddit, onClose }) {
               <h3 className="text-sm font-semibold text-gray-200">
                 {post.title}
               </h3>
-              {post.image && (
-                <img
-                  src={post.image}
-                  alt={post.title}
-                  className="w-full h-auto my-2 rounded-md"
-                />
-              )}
+              {renderMedia(post)}
               <p className="text-xs text-gray-500">by u/{post.author}</p>
             </div>
           ))}
@@ -101,4 +148,3 @@ function Lane({ subreddit, onClose }) {
 }
 
 export default Lane;
-
