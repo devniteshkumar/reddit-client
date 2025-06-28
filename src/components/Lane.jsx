@@ -35,8 +35,8 @@ function Lane({ subreddit, onClose }) {
   const toggleMenu = () => setMenuOpen((prev) => !prev);
 
   return (
-    <div className="h-full p-4 flex flex-col bg-neutral-100 dark:bg-zinc-900 relative">
-      <div className="flex justify-between items-center text-white bg-gray-800 shadow px-3 py-2 rounded-md mb-3 relative">
+    <div className="h-full p-4 flex flex-col bg-zinc-950 text-gray-100 relative rounded-md shadow-inner">
+      <div className="flex justify-between items-center bg-zinc-800 text-white shadow px-3 py-2 rounded-md mb-3 relative">
         <h2 className="text-md font-bold">r/{subreddit}</h2>
         <div className="relative">
           <button type="button" onClick={toggleMenu}>
@@ -47,13 +47,13 @@ function Lane({ subreddit, onClose }) {
             />
           </button>
           {menuOpen && (
-            <div className="absolute right-0 mt-2 w-28 bg-white dark:bg-gray-700 shadow-md rounded-md z-10">
+            <div className="absolute right-0 mt-2 w-28 bg-zinc-800 border border-zinc-700 shadow-md rounded-md z-10">
               <button
                 onClick={() => {
                   fetchPosts();
                   setMenuOpen(false);
                 }}
-                className="block w-full text-left px-4 py-2 text-sm text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600"
+                className="block w-full text-left px-4 py-2 text-sm text-gray-100 hover:bg-zinc-700 rounded-t-md"
               >
                 Refresh
               </button>
@@ -62,7 +62,7 @@ function Lane({ subreddit, onClose }) {
                   if (onClose) onClose(subreddit);
                   setMenuOpen(false);
                 }}
-                className="block w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-100 dark:hover:bg-gray-600"
+                className="block w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-zinc-700 rounded-b-md"
               >
                 Close
               </button>
@@ -71,32 +71,27 @@ function Lane({ subreddit, onClose }) {
         </div>
       </div>
 
-      {loading && <p className="text-gray-500 text-sm">Loading...</p>}
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+      {loading && <p className="text-gray-400 text-sm">Loading...</p>}
+      {error && <p className="text-red-400 text-sm">{error}</p>}
 
       <div className="flex-1 overflow-y-auto pr-2">
         {posts.length === 0 && !loading && !error && (
           <p className="text-gray-500 text-sm">No recent posts found.</p>
         )}
-        <div className="space-y-3">
+        <div className="space-y-4">
           {posts.map((post) => (
-            <div
-              key={post.id}
-              className="border-b border-gray-300 dark:border-gray-700 pb-2"
-            >
-              <h3 className="text-sm font-medium text-gray-900 dark:text-white">
+            <div key={post.id} className="border-b border-zinc-700 pb-2">
+              <h3 className="text-sm font-semibold text-gray-200">
                 {post.title}
               </h3>
               {post.image && (
                 <img
                   src={post.image}
                   alt={post.title}
-                  className="w-full h-auto my-2"
+                  className="w-full h-auto my-2 rounded-md"
                 />
               )}
-              <p className="text-xs text-gray-600 dark:text-gray-400">
-                by u/{post.author}
-              </p>
+              <p className="text-xs text-gray-500">by u/{post.author}</p>
             </div>
           ))}
         </div>
@@ -106,3 +101,4 @@ function Lane({ subreddit, onClose }) {
 }
 
 export default Lane;
+
