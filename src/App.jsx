@@ -16,11 +16,12 @@ function App() {
   };
 
   return (
-    <div
-      className={`flex text-palette ${
-        subreddits.length === 0 ? "bg-black" : ""
-      }`}
-    >
+    <div className="flex text-white bg-black">
+      {subreddits.length === 0 && (
+        <div className="m-auto text-center text-3xl">
+          Enter a subreddit to start!
+        </div>
+      )}
       <LaneContainer
         subreddits={subreddits}
         removeSubreddit={removeSubreddit}

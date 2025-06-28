@@ -1,11 +1,1 @@
 @import "tailwindcss";
-
-.bg-palette {
-    background-color: #F5F1ED;
-    /* Isabelline */
-}
-
-.text-palette {
-    color: #252323;
-    /* Raisin Black */
-}

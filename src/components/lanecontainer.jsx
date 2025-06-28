@@ -4,7 +4,7 @@ import Lane from "./lane";
 function LaneContainer({ subreddits, removeSubreddit }) {
   const numLanes = subreddits.length;
   return (
-    <div className="h-screen flex overflow-x-auto bg-palette dark:bg-zinc-900 mr-[100px]">
+    <div className="h-screen flex overflow-x-auto dark:bg-zinc-900 mr-[100px]">
       {subreddits.map((name) => (
         <div
           key={name}
