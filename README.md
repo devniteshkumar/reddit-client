@@ -109,3 +109,5 @@ This application uses Reddit's public JSON API endpoints:
 - Subreddit suggestions
 - Keyboard shortcuts
 - Offline support with caching
+
+[Problem Statement](https://roadmap.sh/projects/reddit-client)
