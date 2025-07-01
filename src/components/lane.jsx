@@ -5,6 +5,7 @@ function Lane({ subreddit, onClose }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [lightboxVideoUrl, setLightboxVideoUrl] = useState(null); // NEW
 
   const fetchPosts = async () => {
     try {
@@ -77,20 +78,59 @@ function Lane({ subreddit, onClose }) {
       );
     }
 
-    // Rich embeds (like YouTube or Redgifs)
-    if (postHint === "rich:video" && secureMedia?.oembed?.html) {
-      const rawHtml = secureMedia.oembed.html;
+    // YouTube embed
+    if (secureMedia?.type === "youtube.com") {
+      const ytMatch = url.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+      const videoId = ytMatch?.[1];
+      if (videoId) {
+        return (
+          <iframe
+            src={`https://www.youtube.com/embed/${videoId}`}
+            className="w-full rounded-md my-2"
+            style={{ height: `${maxHeight}px` }}
+            frameBorder="0"
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            title="YouTube video"
+          />
+        );
+      }
+    }
+
+    // RedGIFs with lightbox fallback
+    if (
+      postHint === "rich:video" &&
+      (secureMedia?.type?.includes("redgifs.com") || url.includes("redgifs.com"))
+    ) {
+      const redgifFallback =
+        secureMedia?.reddit_video?.fallback_url ??
+        media?.reddit_video?.fallback_url ??
+        null;
+
+      const thumbnail =
+        preview?.images?.[0]?.source?.url?.replace(/&amp;/g, "&") ??
+        null;
 
       return (
-        <div
-          className="relative w-full my-2 overflow-hidden rounded-md"
-          style={{ maxHeight: `${maxHeight}px` }}
+        <button
+          onClick={() => setLightboxVideoUrl(redgifFallback)}
+          className="w-full my-2 relative rounded-md overflow-hidden focus:outline-none"
+          disabled={!redgifFallback}
         >
-          <div
-            className="absolute top-0 left-0 w-full h-full"
-            dangerouslySetInnerHTML={{ __html: rawHtml }}
-          />
-        </div>
+          {thumbnail && (
+            <img
+              src={thumbnail}
+              alt={post.title}
+              className="w-full object-cover"
+              style={{ maxHeight: `${maxHeight}px` }}
+            />
+          )}
+          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40">
+            <span className="text-white text-sm">
+              {redgifFallback ? "Play RedGIF" : "View on RedGIFs"}
+            </span>
+          </div>
+        </button>
       );
     }
 
@@ -173,6 +213,34 @@ function Lane({ subreddit, onClose }) {
           ))}
         </div>
       </div>
+
+      {/* Lightbox Modal */}
+      {lightboxVideoUrl && (
+        <div
+          className="fixed inset-0 z-50 bg-black bg-opacity-80 flex items-center justify-center"
+          onClick={() => setLightboxVideoUrl(null)}
+        >
+          <div
+            className="relative bg-black rounded-md overflow-hidden w-[90%] max-w-3xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <video
+              controls
+              autoPlay
+              className="w-full h-auto rounded-md"
+            >
+              <source src={lightboxVideoUrl} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            <button
+              onClick={() => setLightboxVideoUrl(null)}
+              className="absolute top-2 right-2 text-white bg-black bg-opacity-50 rounded-full p-2"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
