@@ -51,12 +51,15 @@ function PostPopup({ post, onClose }) {
                 className="bg-zinc-900 rounded-lg shadow-xl p-6 max-w-2xl w-full relative overflow-y-auto max-h-[90vh]"
                 onClick={(e) => e.stopPropagation()}
             >
-                <button
-                    onClick={onClose}
-                    className="absolute top-2 right-2 text-zinc-300 bg-zinc-700 hover:bg-zinc-600 rounded-full px-2 py-1"
-                >
-                    ✕
-                </button>
+                <div className="flex justify-end mb-4">
+                    <button
+                        onClick={onClose}
+                        className="filter invert bg-transparent hover:bg-transparent rounded-full p-1 transition-colors duration-200"
+                        aria-label="Close"
+                    >
+                        <img src="/x-circle-fill.svg" alt="Close" className="w-8 h-8" />
+                    </button>
+                </div>
                 <h2 className="text-xl font-bold mb-2 text-zinc-300">{title}</h2>
                 {isImage && url && (
                     <img src={url} alt={title} className="w-full rounded-md mb-3" />
