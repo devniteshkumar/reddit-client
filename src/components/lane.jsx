@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 
-function Lane({ subreddit, onClose }) {
+function Lane({ subreddit, onClose, onPostClick }) {
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [lightboxVideoUrl, setLightboxVideoUrl] = useState(null); // NEW
+  const [lightboxVideoUrl, setLightboxVideoUrl] = useState(null);
+  const [postClicked, setPostClicked] = useState(false);
 
   const fetchPosts = async () => {
     try {
@@ -25,6 +26,7 @@ function Lane({ subreddit, onClose }) {
           preview: post.preview,
           ups: post.ups,
           downs: post.downs,
+          subreddit: post.subreddit,
         };
       });
       setPosts(newPosts);
@@ -34,6 +36,11 @@ function Lane({ subreddit, onClose }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePostClick = (post) => {
+    setPostClicked(true);
+    onPostClick(post);
   };
 
   function renderMedia(post) {
@@ -189,7 +196,11 @@ function Lane({ subreddit, onClose }) {
         )}
         <div className="space-y-4">
           {posts.map((post) => (
-            <div key={post.id} className="border-b border-zinc-700 pb-2">
+            <div
+              key={post.id}
+              className="border-b border-zinc-700 pb-2"
+              onClick={() => handlePostClick(post)}
+            >
               <h3 className="text-sm font-semibold text-gray-200">
                 {post.title}
               </h3>
