@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import {renderMedia} from './renderutility.jsx'
 
 function Lane({ subreddit, onClose, onPostClick }) {
+  // State variables
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -8,6 +10,7 @@ function Lane({ subreddit, onClose, onPostClick }) {
   const [lightboxVideoUrl, setLightboxVideoUrl] = useState(null);
   const [postClicked, setPostClicked] = useState(false);
 
+  // Function to fetch posts from the subreddit
   const fetchPosts = async () => {
     try {
       setLoading(true);
@@ -38,118 +41,21 @@ function Lane({ subreddit, onClose, onPostClick }) {
     }
   };
 
+  // Function to handle post click
   const handlePostClick = (post) => {
     setPostClicked(true);
     onPostClick(post);
   };
 
-  function renderMedia(post) {
-    const { postHint, url, media, secureMedia, preview } = post;
-    const maxHeight = 400;
-
-    // Images
-    if (postHint === "image" && url) {
-      return (
-        <img
-          src={url}
-          alt={post.title}
-          className="w-full rounded-md my-2"
-          style={{ maxHeight: `${maxHeight}px`, objectFit: 'contain' }}
-        />
-      );
-    }
-
-    // Reddit-hosted video
-    if (postHint === "hosted:video" && media?.reddit_video?.fallback_url) {
-      return (
-        <video
-          controls
-          className="w-full rounded-md my-2"
-          style={{ maxHeight: `${maxHeight}px`, objectFit: 'contain' }}
-        >
-          <source src={media.reddit_video.fallback_url} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-      );
-    }
-
-    // Gifs via preview
-    if (preview?.images?.[0]?.variants?.gif?.source?.url) {
-      return (
-        <img
-          src={preview.images[0].variants.gif.source.url.replace(/&amp;/g, "&")}
-          alt={post.title}
-          className="w-full rounded-md my-2"
-          style={{ maxHeight: `${maxHeight}px`, objectFit: 'contain' }}
-        />
-      );
-    }
-
-    // YouTube embed
-    if (secureMedia?.type === "youtube.com") {
-      const ytMatch = url.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-      const videoId = ytMatch?.[1];
-      if (videoId) {
-        return (
-          <iframe
-            src={`https://www.youtube.com/embed/${videoId}`}
-            className="w-full rounded-md my-2"
-            style={{ height: `${maxHeight}px` }}
-            frameBorder="0"
-            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            title="YouTube video"
-          />
-        );
-      }
-    }
-
-    // RedGIFs with lightbox fallback
-    if (
-      postHint === "rich:video" &&
-      (secureMedia?.type?.includes("redgifs.com") || url.includes("redgifs.com"))
-    ) {
-      const redgifFallback =
-        secureMedia?.reddit_video?.fallback_url ??
-        media?.reddit_video?.fallback_url ??
-        null;
-
-      const thumbnail =
-        preview?.images?.[0]?.source?.url?.replace(/&amp;/g, "&") ??
-        null;
-
-      return (
-        <button
-          onClick={() => setLightboxVideoUrl(redgifFallback)}
-          className="w-full my-2 relative rounded-md overflow-hidden focus:outline-none"
-          disabled={!redgifFallback}
-        >
-          {thumbnail && (
-            <img
-              src={thumbnail}
-              alt={post.title}
-              className="w-full object-cover"
-              style={{ maxHeight: `${maxHeight}px` }}
-            />
-          )}
-          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40">
-            <span className="text-white text-sm">
-              {redgifFallback ? "Play RedGIF" : "View on RedGIFs"}
-            </span>
-          </div>
-        </button>
-      );
-    }
-
-    return null;
-  }
-
+  // useEffect to fetch posts on subreddit change
   useEffect(() => {
     fetchPosts();
   }, [subreddit]);
 
+  // Function to toggle the menu
   const toggleMenu = () => setMenuOpen((prev) => !prev);
 
+  // Return the JSX for the Lane component
   return (
     <div className="h-full p-4 flex flex-col bg-zinc-950 text-gray-100 relative rounded-md shadow-inner">
       <div className="flex justify-between items-center bg-zinc-800 text-white shadow px-3 py-2 rounded-md mb-3 relative">
