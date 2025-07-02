@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from "react";
+import { renderMedia } from "./renderutility.jsx";
 
 function PostPopup({ post, onClose }) {
+    // State for comments
     const [comments, setComments] = useState([]);
     const [loadingComments, setLoadingComments] = useState(true);
     const [error, setError] = useState(null);
 
+    // Fetch comments when the post changes
     useEffect(() => {
         if (!post) return;
 
+        // Fetch comments
         const fetchComments = async () => {
             try {
                 setLoadingComments(true);
@@ -16,6 +20,7 @@ function PostPopup({ post, onClose }) {
                 );
                 const data = await res.json();
 
+                // Only take the top-level comments
                 const commentData = data[1]?.data?.children
                     .filter((c) => c.kind === "t1")
                     .map((c) => ({
@@ -25,6 +30,7 @@ function PostPopup({ post, onClose }) {
                         id: c.data.id,
                     }));
 
+                // Update the state
                 setComments(commentData);
                 setError(null);
             } catch (err) {
@@ -34,14 +40,17 @@ function PostPopup({ post, onClose }) {
             }
         };
 
+        // Fetch the comments
         fetchComments();
     }, [post]);
 
+    // If no post, return null
     if (!post) return null;
 
-    const { title, url, postHint, author } = post;
-    const isImage = postHint === "image";
+    // Destructure the post object
+    const { title, author, postHint, url } = post;
 
+    // Render the popup
     return (
         <div
             className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
@@ -61,9 +70,7 @@ function PostPopup({ post, onClose }) {
                     </button>
                 </div>
                 <h2 className="text-xl font-bold mb-2 text-zinc-300">{title}</h2>
-                {isImage && url && (
-                    <img src={url} alt={title} className="w-full rounded-md mb-3" />
-                )}
+                {renderMedia(post)}
                 <p className="text-sm text-zinc-500 mb-4">Posted by u/{author}</p>
 
                 <h3 className="text-lg font-semibold mb-2 text-zinc-300">Comments</h3>
