@@ -1,1 +1,95 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 222 47% 8%;
+    --foreground: 210 40% 98%;
+
+    --card: 220 40% 12%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 220 40% 12%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 16 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 250 70% 60%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 280 60% 65%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 28% 20%;
+    --input: 215 28% 20%;
+    --ring: 250 70% 60%;
+
+    --radius: 0.875rem;
+    
+    /* Rich gradient tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(16 100% 50%) 0%, hsl(25 100% 55%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(250 70% 60%) 0%, hsl(280 60% 65%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(220 40% 14%) 0%, hsl(220 40% 11%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(250 70% 25%) 0%, hsl(220 47% 10%) 50%, hsl(16 100% 20%) 100%);
+    --gradient-glass: linear-gradient(135deg, hsl(220 40% 15% / 0.8) 0%, hsl(220 40% 12% / 0.6) 100%);
+    
+    /* Enhanced shadows */
+    --shadow-card: 0 4px 16px -2px hsl(0 0% 0% / 0.4), 0 2px 8px -1px hsl(0 0% 0% / 0.3);
+    --shadow-hover: 0 12px 24px -4px hsl(0 0% 0% / 0.5), 0 8px 16px -4px hsl(250 70% 60% / 0.2);
+    --shadow-glow: 0 0 32px hsl(16 100% 50% / 0.4), 0 0 16px hsl(250 70% 60% / 0.3);
+    --shadow-inner: inset 0 2px 4px hsl(0 0% 0% / 0.2);
+    
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--border));
+    border-radius: 9999px;
+    border: 2px solid transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--muted-foreground));
+  }
+}
