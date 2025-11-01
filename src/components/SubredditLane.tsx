@@ -14,6 +14,7 @@ interface SubredditLaneProps {
 export const SubredditLane = ({ subreddit, onRemove }: SubredditLaneProps) => {
   const [selectedPost, setSelectedPost] = useState<RedditPost | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [sort, setSort] = useState<"hot" | "new" | "top" | "rising">("hot");
 
   const handlePostClick = (post: RedditPost) => {
     setSelectedPost(post);
@@ -21,9 +22,9 @@ export const SubredditLane = ({ subreddit, onRemove }: SubredditLaneProps) => {
   };
 
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["subreddit", subreddit],
+    queryKey: ["subreddit", subreddit, sort],
     queryFn: async () => {
-      const response = await fetch(`https://www.reddit.com/r/${subreddit}.json`);
+      const response = await fetch(`https://www.reddit.com/r/${subreddit}/${sort}.json`);
       if (!response.ok) {
         throw new Error("Subreddit not found");
       }
@@ -36,27 +37,46 @@ export const SubredditLane = ({ subreddit, onRemove }: SubredditLaneProps) => {
   return (
     <div className="flex-shrink-0 w-[400px] h-full flex flex-col animate-slide-in">
       {/* Lane Header */}
-      <div className="bg-gradient-card backdrop-blur-sm border border-border/50 rounded-xl p-4 mb-4 flex items-center justify-between shadow-card hover:shadow-hover transition-shadow duration-300">
-        <h2 className="text-lg font-bold bg-gradient-secondary bg-clip-text text-transparent">
-          r/{subreddit}
-        </h2>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => refetch()}
-            className="h-8 w-8 hover:bg-secondary/20 hover:text-secondary transition-colors"
-          >
-            <RefreshCw className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onRemove}
-            className="h-8 w-8 hover:bg-destructive/20 hover:text-destructive transition-colors"
-          >
-            <X className="h-4 w-4" />
-          </Button>
+      <div className="bg-gradient-card backdrop-blur-sm border border-border/50 rounded-xl p-4 mb-4 shadow-card hover:shadow-hover transition-shadow duration-300">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-lg font-bold bg-gradient-secondary bg-clip-text text-transparent">
+            r/{subreddit}
+          </h2>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => refetch()}
+              className="h-8 w-8 hover:bg-secondary/20 hover:text-secondary transition-colors"
+            >
+              <RefreshCw className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onRemove}
+              className="h-8 w-8 hover:bg-destructive/20 hover:text-destructive transition-colors"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+        
+        {/* Sort Options */}
+        <div className="flex gap-1 bg-background/50 rounded-lg p-1">
+          {(["hot", "new", "top", "rising"] as const).map((sortOption) => (
+            <button
+              key={sortOption}
+              onClick={() => setSort(sortOption)}
+              className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 ${
+                sort === sortOption
+                  ? "bg-gradient-secondary text-white shadow-card"
+                  : "text-muted-foreground hover:text-foreground hover:bg-background/80"
+              }`}
+            >
+              {sortOption.charAt(0).toUpperCase() + sortOption.slice(1)}
+            </button>
+          ))}
         </div>
       </div>
 

@@ -136,28 +136,28 @@ export const PostDetailModal = ({ post, open, onOpenChange }: PostDetailModalPro
         <ScrollArea className="max-h-[95vh]">
           <div className="p-8">
             {/* Post Header */}
-            <div className="flex items-start gap-4 mb-6">
-              <div className="flex flex-col items-center gap-1 bg-gradient-glass backdrop-blur-sm rounded-xl p-3 shadow-card">
-                <ArrowBigUp className="h-6 w-6 text-primary" />
-                <span className="text-sm font-bold bg-gradient-primary bg-clip-text text-transparent">
+            <div className="flex items-start gap-5 mb-8">
+              <div className="flex flex-col items-center gap-2 bg-gradient-glass backdrop-blur-sm rounded-xl p-4 shadow-card min-w-[72px]">
+                <ArrowBigUp className="h-7 w-7 text-primary" />
+                <span className="text-base font-bold bg-gradient-primary bg-clip-text text-transparent">
                   {post.score.toLocaleString()}
                 </span>
               </div>
 
-              <div className="flex-1 min-w-0">
-                <h2 className="text-2xl font-bold leading-tight mb-4 text-foreground">
+              <div className="flex-1 min-w-0 space-y-4">
+                <h2 className="text-3xl font-bold leading-tight text-foreground">
                   {post.title}
                 </h2>
                 <div className="flex flex-wrap items-center gap-3 text-sm">
-                  <span className="px-3 py-1 bg-gradient-secondary rounded-full text-white font-medium shadow-card">
+                  <span className="px-3 py-1.5 bg-gradient-secondary rounded-full text-white font-medium shadow-card">
                     {post.subreddit_name_prefixed}
                   </span>
-                  <span className="text-muted-foreground">u/{post.author}</span>
-                  <span className="text-muted-foreground">•</span>
+                  <span className="text-muted-foreground font-medium">u/{post.author}</span>
+                  <span className="text-muted-foreground/50">•</span>
                   <span className="text-muted-foreground">{timeSince(post.created_utc)}</span>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <MessageSquare className="h-4 w-4" />
-                    <span>{post.num_comments.toLocaleString()} comments</span>
+                  <div className="flex items-center gap-2 px-3 py-1 bg-secondary/10 rounded-full">
+                    <MessageSquare className="h-4 w-4 text-secondary" />
+                    <span className="text-secondary font-semibold">{post.num_comments.toLocaleString()}</span>
                   </div>
                 </div>
               </div>
@@ -168,31 +168,32 @@ export const PostDetailModal = ({ post, open, onOpenChange }: PostDetailModalPro
 
             {/* Self Text */}
             {selftext && (
-              <div className="mt-6 p-6 bg-gradient-glass backdrop-blur-sm rounded-xl border border-border/50">
-                <p className="whitespace-pre-wrap text-foreground leading-relaxed">
+              <div className="mt-8 p-6 bg-gradient-glass backdrop-blur-sm rounded-xl border border-border/50 shadow-inner">
+                <p className="whitespace-pre-wrap text-foreground/90 leading-relaxed text-[15px]">
                   {selftext}
                 </p>
               </div>
             )}
 
             {/* Comments Section */}
-            <Separator className="my-8" />
+            <Separator className="my-10" />
 
-            <div className="mb-6">
-              <h3 className="text-xl font-bold mb-1 bg-gradient-secondary bg-clip-text text-transparent">
+            <div className="mb-8">
+              <h3 className="text-2xl font-bold mb-2 bg-gradient-secondary bg-clip-text text-transparent">
                 Comments
               </h3>
-              <p className="text-sm text-muted-foreground">
-                {post.num_comments.toLocaleString()} comments
+              <p className="text-sm text-muted-foreground/70">
+                {post.num_comments.toLocaleString()} {post.num_comments === 1 ? 'comment' : 'comments'}
               </p>
             </div>
 
             {commentsLoading ? (
-              <div className="flex items-center justify-center py-12">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <div className="flex flex-col items-center justify-center py-16 gap-4">
+                <Loader2 className="h-10 w-10 animate-spin text-primary" />
+                <p className="text-sm text-muted-foreground">Loading comments...</p>
               </div>
             ) : (
-              <div className="space-y-6">
+              <div className="space-y-5">
                 {comments.map((comment) => {
                   if (comment.kind === "t1" && comment.data.body) {
                     return <Comment key={comment.data.id} comment={comment.data} />;
@@ -200,8 +201,10 @@ export const PostDetailModal = ({ post, open, onOpenChange }: PostDetailModalPro
                   return null;
                 })}
                 {comments.length === 0 && (
-                  <div className="text-center py-12 text-muted-foreground">
-                    No comments yet
+                  <div className="text-center py-16 bg-gradient-glass backdrop-blur-sm rounded-xl border border-border/30">
+                    <div className="text-4xl mb-3">💬</div>
+                    <p className="text-muted-foreground">No comments yet</p>
+                    <p className="text-sm text-muted-foreground/60 mt-1">Be the first to comment on Reddit!</p>
                   </div>
                 )}
               </div>

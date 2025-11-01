@@ -36,61 +36,70 @@ export const Comment = ({ comment, depth = 0 }: CommentProps) => {
     comment.replies.data.children &&
     comment.replies.data.children.length > 0;
 
-  const depthColors = [
-    "border-l-primary/50",
-    "border-l-secondary/50",
-    "border-l-accent/50",
-    "border-l-primary/30",
-    "border-l-secondary/30",
+  const borderStyles = [
+    { borderColor: 'hsl(16 100% 50% / 0.4)', bgColor: 'hsl(16 100% 50% / 0.05)' },
+    { borderColor: 'hsl(250 70% 60% / 0.4)', bgColor: 'hsl(250 70% 60% / 0.05)' },
+    { borderColor: 'hsl(280 60% 65% / 0.4)', bgColor: 'hsl(280 60% 65% / 0.05)' },
+    { borderColor: 'hsl(16 100% 50% / 0.25)', bgColor: 'hsl(16 100% 50% / 0.03)' },
+    { borderColor: 'hsl(250 70% 60% / 0.25)', bgColor: 'hsl(250 70% 60% / 0.03)' },
   ];
 
-  const borderColor = depthColors[depth % depthColors.length];
+  const currentStyle = borderStyles[depth % borderStyles.length];
 
   return (
-    <div className={`${depth > 0 ? `ml-4 pl-4 border-l-2 ${borderColor}` : ""}`}>
-      <div className="group">
-        <div className="flex items-start gap-3 mb-2">
+    <div 
+      className={`${depth > 0 ? 'ml-3 pl-4 border-l-2' : ''} transition-all duration-200 rounded-lg`}
+      style={{ 
+        borderColor: depth > 0 ? currentStyle.borderColor : undefined,
+        backgroundColor: depth > 0 ? currentStyle.bgColor : undefined
+      }}
+    >
+      <div className="group py-2">
+        <div className="flex items-start gap-3">
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="flex flex-col items-center gap-0.5 pt-1 hover:opacity-70 transition-opacity"
+            className="flex flex-col items-center gap-1 pt-0.5 px-2 py-1.5 rounded-lg hover:bg-gradient-glass transition-all"
           >
-            <ArrowBigUp className="h-4 w-4 text-muted-foreground" />
-            <span className="text-xs font-medium text-muted-foreground">
+            <ArrowBigUp className="h-4 w-4 text-primary" />
+            <span className="text-xs font-bold bg-gradient-primary bg-clip-text text-transparent">
               {comment.score}
             </span>
           </button>
 
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-sm font-semibold text-foreground">
+            <div className="flex flex-wrap items-center gap-2 mb-2">
+              <span className="text-sm font-semibold text-primary hover:underline cursor-pointer">
                 u/{comment.author}
               </span>
+              <span className="text-muted-foreground/50">•</span>
               <span className="text-xs text-muted-foreground">
                 {timeSince(comment.created_utc)}
               </span>
               {hasReplies && (
                 <button
                   onClick={() => setCollapsed(!collapsed)}
-                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  className="flex items-center gap-1 text-xs text-secondary hover:text-secondary/80 transition-colors font-medium"
                 >
                   {collapsed ? (
-                    <ChevronRight className="h-3 w-3" />
+                    <>
+                      <ChevronRight className="h-3.5 w-3.5" />
+                      <span>[{comment.replies.data.children.length} {comment.replies.data.children.length === 1 ? 'reply' : 'replies'}]</span>
+                    </>
                   ) : (
-                    <ChevronDown className="h-3 w-3" />
+                    <ChevronDown className="h-3.5 w-3.5" />
                   )}
-                  {collapsed && `[${comment.replies.data.children.length} replies]`}
                 </button>
               )}
             </div>
 
             {!collapsed && (
-              <>
-                <p className="text-sm text-foreground whitespace-pre-wrap mb-3 leading-relaxed">
+              <div className="animate-fade-in">
+                <p className="text-sm text-foreground/90 whitespace-pre-wrap mb-3 leading-relaxed">
                   {comment.body}
                 </p>
 
                 {hasReplies && (
-                  <div className="space-y-3 mt-3">
+                  <div className="space-y-2 mt-3">
                     {comment.replies.data.children.map((reply) => {
                       if (reply.kind === "t1" && reply.data.body) {
                         return (
@@ -105,7 +114,7 @@ export const Comment = ({ comment, depth = 0 }: CommentProps) => {
                     })}
                   </div>
                 )}
-              </>
+              </div>
             )}
           </div>
         </div>

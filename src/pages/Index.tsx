@@ -4,11 +4,7 @@ import { AddLaneInput } from "@/components/AddLaneInput";
 import { Layers } from "lucide-react";
 
 const Index = () => {
-  const [subreddits, setSubreddits] = useState<string[]>([
-    "programming",
-    "technology",
-    "webdev",
-  ]);
+  const [subreddits, setSubreddits] = useState<string[]>([]);
 
   const handleAddSubreddit = (subreddit: string) => {
     setSubreddits((prev) => [...prev, subreddit]);
